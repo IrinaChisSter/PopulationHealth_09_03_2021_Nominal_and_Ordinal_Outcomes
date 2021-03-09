@@ -1,7 +1,7 @@
 ---
 title: "Multinomial and Ordinal Logistic Regression"
 author: "Dr Irina Chis Ster"
-date: "21/01/2021"
+date: "06/03/2021"
 output:
   html_notebook:  
     df_print: paged
@@ -28,17 +28,17 @@ knitr::opts_chunk$set(echo = TRUE)
 
 -   Predictions
 
--   Ordinal Logistic Regression
+-   Ordinal Logistic Regression - what is it and why do we need it?
 
 ## Multinomial Logistic Regression
 
 -   A(nother) generalized linear model
 
     -   linearity assumption extends from that between the outcome and
-        independent variable (in continuous outcome situation) to that
-        between the log
+        independent variable (continuous outcome situation) to that
+        between the log of the risk ratios and the potential explanatory variables
 
--   Supervised learning technique Parametric techniques
+-   Supervised learning technique - parametric techniques
 
 -   A regression technique applicable to nominal
     outcomes/responses/dependent variables with more than two categories
@@ -156,7 +156,7 @@ As for the all regression techniques:
         variables is a better fit to the data
 
 -   Non-nested models - AIC criterion: the smaller the value, the better
-    the model
+    the model. The AIC has no particular meaning per se.
 
 ## Interpretation:
 
