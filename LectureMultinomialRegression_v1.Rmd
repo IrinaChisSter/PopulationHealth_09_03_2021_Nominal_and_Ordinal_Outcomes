@@ -1,0 +1,772 @@
+---
+title: "Multinomial and Ordinal Logistic Regression"
+author: "Dr Irina Chis Ster"
+date: "21/01/2021"
+output:
+  html_notebook:  
+    df_print: paged
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# OUTLINE
+
+-   Multinomial Logistic Regression - what is it and why do we need it?
+
+-   Assumptions
+
+-   Measures of associations and hypothesis testing
+
+-   Goodness of fit
+
+-   Model choice
+
+-   Predictions
+
+-   Ordinal Logistic Regression
+
+## Multinomial Logistic Regression
+
+-   A(nother) generalized linear model
+
+    -   linearity assumption extends from that between the outcome and
+        independent variable (in continuous outcome situation) to that
+        between the log
+
+-   Supervised learning technique Parametric techniques
+
+-   A regression technique applicable to nominal
+    outcomes/responses/dependent variables with more than two categories
+
+    -   Continuous outcomes - linear and multiple/multivariable
+        regression
+
+    -   Binary outcomes - univariate and multivariable/multiple logistic
+        regression
+
+    -   Nominal outcomes - multinomial logistic regression
+
+-   Outcomes of different statistical types require different regression
+    techniques
+
+## Measures of associations
+
+-   The outcome and the explanatory/independent variable(s)
+
+-   Continuous outcome - [***regression coefficient***]{.ul} (NOT
+    correlation)
+
+-   Logistic regression - [***odds ratios (OR)***]{.ul}
+
+-   Multinomial logistic regression - ([***relative) risk ratios
+    (RRR)***]{.ul}
+
+## Hypothesis testing (2-sided)
+
+### Univariate association
+
+-   [***Continuous outcome - linear regression***]{.ul}
+
+    -   H0: no linear association between the outcome and the
+        independent variable which translates into regression
+        coefficient (slope of the regression line) $\beta=0$
+
+    -   H1:there is a linear association between the outcome and the
+        independent variable which translates into regression
+        coefficient (slope of the regression line) $\beta\neq 0$
+
+-   Binary outcome - Logistic regression
+
+    -   H0: no association between the outcome and the independent
+        variable translates into $OR=1$
+
+    -   H1: there is an association between outcome and the independent
+        variable which translates translates into $OR\neq 1$
+
+-   Nominal data - Multinomial logistic regression
+
+    -   H0: no association between outcome and independent variables
+        translates into $RRR=1$
+
+    -   H0: there is an association between outcome and the independent
+        variable which translates into $RRR\neq 1$
+
+### Multivariable associations
+
+-   Continuous outcomes
+
+    -   H0: All regression coefficients are 0
+
+    -   H1: At least one is not 0
+
+-   Logistic regression -
+
+    -   H0: All OR=1
+
+    -   H1: At least one OR not 1
+
+-   Multinomial logistic regression -
+
+    -   H0: All RRR=1
+
+    -   H1: At least one RRR is not 1
+
+## Assumptions
+
+-   Independence of the observations
+
+-   All model assume some kind of linear relationship:
+
+    -   Continuous outcome: between the outcome and the independent
+        variables
+
+    -   Binary outcome: between the Log(OR) of the outcome and the
+        independent variables
+
+    -   Nominal outcomes: between the Log(RR) of the outcome and the
+        independent variables
+
+## Goodness of fit and model diagnosis
+
+-   Continuous outcomes only: residuals play a central role in assessing
+    model goodness of fit and diagnosis
+
+-   Binary outcomes: no residuals. Hosmer-Lemeshow statistics
+
+-   Categorical outcomes: the model is in essence a group of logistic
+    regressions fit all at once to the data
+
+    -   Similar results should hold if separate logistic regressions for
+        binary outcomes constructed from the original nominal outcome
+
+## Model choice
+
+As for the all regression techniques:
+
+-   Nested models - likelihood ratios comparisons
+
+    -   H0: The two models are equally good
+
+    -   H1: The two model with the larger number of explanatory
+        variables is a better fit to the data
+
+-   Non-nested models - AIC criterion: the smaller the value, the better
+    the model
+
+## Interpretation:
+
+-   Continuous outcome: a regression coefficient and its corresponding
+    95%CI on either side of 0 indicates a statistically significant
+    effect.
+
+-   Categorical outcome: an RR (OR) and its corresponding 95%CI on
+    either side of 1 indicates a statistically significant effect.
+
+-   The magnitude and the sense of the effect differ according to the
+    independent variable nature (continuous or categorical)
+
+## Reminder:
+
+-   Risk: $\pi=\frac{D}{N}$
+
+-   Odds: $\frac{\pi}{1-\pi}=\frac{D}{\bar D}$
+
+-   Risk Ratios: $\frac{\pi_{women}}{\pi_{men}}$
+
+-   Odds Ratios: $\frac{OR_{women}}{OR_{men}}$
+
+-   Relative Risk
+    Ratios:$\frac{{\frac{OR_{women}}{OR_{men}}_{UK}}}{{\frac{OR_{women}}{OR_{men}}}_{France}}$
+
+# Example 1: Social science data
+
+-   US 1996 National Election Study: 10 variable subset of the 1996
+    American National Election Study. Missing values and "don't know"
+    responses have been list wise deleted. Respondents expressing a
+    voting preference other than Clinton or Dole have been removed.
+    (**Source:** Sapiro, Virginia, Steven J. Rosenstone, Donald R.
+    Kinder, Warren E. Miller, and the National Election Studies.
+    AMERICAN NATIONAL ELECTION STUDIES, 1992-1997: Ann Arbor, MI:
+    University of Michigan)
+
+-   Variables in the data:
+
+    -   **Popul:** population of respondent's location in 1000s of
+        people
+
+    -   **TVnews** days in the past week spent watching news on TV
+
+    -   **selfLR:** Left-Right self-placement of respondent: an ordered
+        factor with levels
+
+        -   extremely liberal (extLib)
+
+        -   liberal (Lib)
+
+        -   slightly liberal (sliLib)
+
+        -   moderate (Mod)
+
+        -   slightly conservative (sliCon)
+
+        -   conservative (Con)
+
+        -   extremely conservative (extCon)
+
+    -   **ClinLR:** Left-Right placement of Bill Clinton (same scale as
+        selfLR): an ordered factor with 7 levels as above
+
+    -   **DoleLR:** Left-Right placement of Bob Dole (same scale as
+        selfLR): an ordered factor with 7 levels as above
+
+    -   **PID:** Party identification: an ordered factor with levels
+
+        -   strong Democrat (strDem)
+
+        -   weak Democrat (weakDem)
+
+        -   independent Democrat (indDem)
+
+        -   independent independent (indind)
+
+        -   indepedent Republican (indRep)
+
+        -   weak Republican (weakRep)
+
+        -   strong Republican (strRep)
+
+    -   **age:** Respondent's age in years
+
+    -   **educ:** Respondent's education: an ordered factor with levels
+
+        -   8 years or less (MS)
+
+        -   high school dropout (HSdrop)
+
+        -   high school diploma or GED (HS)
+
+        -   some College (Coll)
+
+        -   Community or junior College degree (CCdeg)
+
+        -   BA degree (BAdeg)
+
+        -   postgraduate degree (MAdeg)
+
+    -   **Income**: Respondent's family income: an ordered factor with
+        levels from less than 3K to 105Kplus in uneven i.e.
+        (`$3K-$5K`,`$5K-$7K`,`$7K-$9K`,`$9K-$10K`,`$10K-$11K`,`$11K-$12K`,`$12K-$13K`,`$13K-$14K`,`$14K-$15K`,`$15K-$17K`,`$17K-$20K`,`$20K-$22K`,`$22K-$25K`,`$25K-$30K`,
+        `$30K-$35`, `$35K-$40K`,
+        `$40K-$45K`,`$45K-$50K, $50K-$60K`,`$60K-$75K`,`$75K-$90K`,
+        `$90K-$105K`
+
+    -   **Vote:** Expected vote in 1996 presidential election: a factor
+        with level Clinton and Dole
+
+## Reading the data
+
+```{r}
+mydata<-read.table("Survey.txt", header=T, sep="\t")
+dim(mydata)
+names(mydata)
+```
+
+## Creating a series of 3-category nominal variables
+
+### The outcome
+
+```{r}
+mydata$PID_factor <- mydata$PID
+
+## R order strings in alphabetical order
+table(mydata$PID)
+
+##create the new factor
+levels(mydata$PID_factor) <- c("Independent","Independent", "Independent", "Democrat", "Republican", "Democrat","Republican")
+
+table(mydata$PID_factor,mydata$PID)
+
+```
+
+### The education level
+
+```{r}
+mydata$educ_factor<-mydata$educ
+table(mydata$educ)
+levels(mydata$educ_factor) <- c("High","Average", "Average", "Average", "Low", "High","Low")
+table(mydata$educ,mydata$educ_factor)
+
+```
+
+### The income level
+
+```{r}
+##this is a string which R orders in alphabetical order
+table(mydata$income)
+
+mydata$income_factor<-mydata$income
+table(mydata$income_factor)
+levels(mydata$income_factor) <- c("130", "5","7", "9", "10", "11", "12","13","14","15", "17", "20", "22", "25","3","30", "35", "40", "45","50","60", "75", "90", "105")
+table(mydata$income_factor, mydata$income)
+
+mydata$income_numeric<-as.numeric(mydata$income_factor)
+is.numeric(mydata$income_numeric)
+```
+
+## The multinomial logistic - univariate model
+
+### Continuous independent variable - summary at the log scale
+
+```{r}
+multinom_on_age <- multinom(mydata$PID_factor ~ age, data =mydata)
+summary(multinom_on_age)
+```
+
+### Continuous independent variable - summary transformed for RR interpretation
+
+```{r}
+multinom_on_age_test <- summary(multinom_on_age)$coefficients/summary(multinom_on_age)$standard.errors
+
+# 2-tailed z test
+multinom_on_age_p <- (1 - pnorm(abs(multinom_on_age_test), 0, 1)) * 2
+multinom_on_age_p
+
+exp(coef(multinom_on_age))
+exp(confint(multinom_on_age))
+
+```
+
+### Interpretation: 
+
+1.002= The relative risk ratio for a one unit increase in **age** for
+being Democrat relative to Independent. For one year increase in age,
+the relative risk (probability) for being a Democrat relative to
+Independent would be expected to increase by a factor of 1.002. The
+p-value is 0.679 - so this is not statistically significant.
+
+## The multinomial univariate model
+
+### Categorical independent variable - summary at the log scale
+
+```{r}
+multinom_on_edu <- multinom(mydata$PID_factor ~ educ_factor, data =mydata)
+summary(multinom_on_edu)
+
+```
+
+Interpretation for estimates at log scale:
+
+-   The baseline of the outcome factor is "independent".
+
+-   The baseline for education factor is "high".
+
+-   There are 4 relative relationships:
+
+    -   RR of Democrat vs. Independent for Average vs. High education
+
+    -   RR of Democrat vs. Independent for Low vs. High education
+
+    -   RR of Republic vs. Independent for Average vs. High education
+
+    -   RR of Republic vs. Independent for Low vs. High education
+
+```{r}
+# 2-tailed z test
+multinom_on_edu_test <- summary(multinom_on_edu)$coefficients/summary(multinom_on_edu)$standard.errors
+
+multinom_on_edu_p <- (1 - pnorm(abs(multinom_on_edu_test), 0, 1)) * 2
+multinom_on_edu_p
+```
+
+-   The p-values correspond to
+
+    -   RR of Democrat vs. Independent for Average vs. High education
+        (p=0.157)
+
+    -   RR of Democrat vs. Independent for Low vs. High education
+        (p=0.105)
+
+    -   RR of Republic vs. Independent for Average vs. High education
+        (p=0.895)
+
+    -   RR of Republic vs. Independent for Low vs. High education
+        (p=0.039)
+
+### Categorical independent variable - summary transformed for RR interpretation
+
+```{r}
+exp(coef(multinom_on_edu))
+```
+
+-   There are 4 relative relationships:
+
+    -   RR of Democrat vs. Independent is 1.28 higher for Average
+        compared to High education
+
+    -   RR of Democrat vs. Independent is 1.69 higher for Low compared
+        to High education
+
+    -   RR of Republican vs. Independent is 1.02 higher for Average
+        compared to High education
+
+    -   RR of Republican vs. Independent is 0.42 of Low compared to High
+        education
+
+```{r}
+exp(confint(multinom_on_edu))
+
+```
+
+-   There are 4 relative 95%CI:
+
+    -   RR of Democrat vs. Independent is 1.28 higher for Average
+        compared to High education (0.91-1.81)
+
+    -   RR of Democrat vs. Independent is 1.69 higher for Low compared
+        to High education (0.897-3.167)
+
+    -   RR of Republican vs. Independent is 1.02 higher for Average
+        compared to High education (0.723 - 1.449)
+
+    -   RR of Republican vs. Independent is 0.42 for Low compared to
+        High education (0.184-0.958)
+
+## The multinomial mutiple/multivariable model
+
+### ADDITIVE MODEL
+
+```{r}
+
+multinom_on_additive <- multinom(mydata$PID_factor ~ income_numeric+ educ_factor, data =mydata)
+summary(multinom_on_additive)
+
+```
+
+-   Interpretation -estimates at log scale
+
+-   Same as above - but controlled/adjusted for income
+
+-   In addition:
+
+    -   RR of Democrat vs. Independent decreases with increasing
+        income - controlled for education level
+
+    -   RR of Republican vs. Independent increases with increasing
+        income - controlled for education level
+
+```{r}
+multinom_on_additive_test <- summary(multinom_on_additive)$coefficients/summary(multinom_on_additive)$standard.errors
+
+# 2-tailed z test
+multinom_on_additive_p <- (1 - pnorm(abs(multinom_on_additive_test), 0, 1)) * 2
+multinom_on_additive_p
+```
+
+-   The adjusted p-values correspond to
+
+    -   RR of Democrat vs. Independent for Average vs. High education
+        (p=0.162)
+
+    -   RR of Democrat vs. Independent for Low vs. High education
+        (p=0.136)
+
+    -   RR of Republic vs. Independent for Average vs. High education
+        (p=0.889)
+
+    -   RR of Republic vs. Independent for Low vs. High education
+        (p=0.042)
+
+    -   RR of Democrat vs. Independent increase with income ( p=0.149)
+
+    -   RR of Republican vs. Independent increase with income ( p=0.769)
+
+```{r}
+exp(coef(multinom_on_additive))
+exp(confint(multinom_on_additive))
+
+```
+
+-   There are 6 relative 95%CI:
+
+    -   Adjusted RR of Democrat vs. Independent is 1.28 higher for
+        Average compared to High education (0.91-1.81) - so the RRR=1.28
+
+    -   Adjusted RR of Democrat vs. Independent is 1.61 higher for Low
+        compared to High education (0.859-3.052)- so the RRR=1.61
+
+    -   Adjusted RR of Republican vs. Independent is 1.02 higher for
+        Average compared to High education (0.723 - 1.451)
+
+    -   Adjusted RR of Republican vs. Independent is 0.42 for Low
+        compared to High education (0.186-0.969)
+
+    -   Adjusted change in RR of Democrat vs. Independent for one unit
+        increase in income (drops by (1-0.957)\*100% with one unit
+        increasing in outcome)
+
+    -   Adjusted change in RR of Republican vs. Independent for one unit
+        increase in income(drops with increasing outcome)
+
+## The multinomial mutiple/multivariable model
+
+### INTERACTION MODEL
+
+Are the effects of education on the RR of Democrat/Republican vs.
+Independent modified by the income level? Or, the other way around, is
+the effect of income level on the RR of Democrat/Republican vs.
+Independent modified by the education level?
+
+Fitting the model
+
+```{r}
+
+multinom_on_multiplic <- multinom(mydata$PID_factor ~ income_numeric* educ_factor, data =mydata)
+summary(multinom_on_multiplic)
+```
+
+The p-values
+
+```{r}
+# 2-tailed z test
+multinom_on_multiplic_p <- (1 - pnorm(abs(multinom_on_multiplic_summary), 0, 1)) * 2
+multinom_on_multiplic_p
+```
+
+The RR
+
+```{r}
+exp(coef(multinom_on_multiplic))
+exp(confint(multinom_on_multiplic))
+```
+
+#### Goodness of fit
+
+```{r}
+logitgof(mydata$PID_factor, fitted(multinom_on_multiplic)  )
+
+```
+
+#### Model choice
+
+```{r}
+lrtest(multinom_on_multiplic, multinom_on_additive)
+AIC(multinom_on_multiplic, multinom_on_additive)
+```
+
+### PREDICTIONS
+
+#### Create a speadsheet of values within the data range
+
+##### Predictions by education factor at the means of income levels
+
+```{r}
+create_data_pred <- data.frame(educ_factor = c("Low", "Average", "High"), income_numeric = mean(mydata$income_numeric))
+predict(multinom_on_multiplic, newdata = create_data_pred, "probs")
+```
+
+[***Interpretation:***]{.ul} these are the absolute proportions (risk)
+of being across each education level and for
+independent/democrat/republican at the average income. The proportions
+add to 1 across every row (education level).
+
+##### Predictions by education factor at detailed by income levels
+
+```{r}
+create_data_pred_2 <- data.frame(educ_factor = rep(c("Low", "Average", "High"), each = 128), income_numeric = rep(c(3:130),1))
+
+## store the predicted probabilities for each value of education and income
+pp.income <- cbind(create_data_pred_2, predict(multinom_on_multiplic, newdata =create_data_pred_2, type = "probs", se = TRUE))
+
+## calculate the mean probabilities within each level of education
+by(pp.income[, 3:5], pp.income$income_numeric, colMeans)
+```
+
+```{r}
+## melt data set to long for ggplot2
+lpp <- melt(pp.income, id.vars = c("educ_factor", "income_numeric"), value.name="probability")
+head(lpp)  # view first few rows
+```
+
+```{r}
+## plot predicted probabilities across income values for each level of education
+
+ggplot(lpp, aes(x = income_numeric, y = value, colour = educ_factor)) + geom_line() + facet_grid(variable ~., scales = "free")
+```
+
+# Ordinal logistic regression
+
+-   Applied to an ordinal dependent (response) variables
+
+-   The independent variables may be categorical factors or continuous
+    covariates.
+
+-   One of the assumptions underlying ordered logistic regression is
+    that the relationship between each pair of outcome groups is the
+    same.
+
+-   In other words, ordered logistic regression assumes that the
+    coefficients that describe the relationship between, say, the lowest
+    versus all higher categories of the response variable are the same
+    as those that describe the relationship between the next lowest
+    category and all higher categories, etc.
+
+-   This is called the [***proportional odds assumption or the parallel
+    regression assumption***]{.ul}.  This can be checked by [***Brant
+    test***]{.ul} in R:
+
+    -   H0: the proportional odds assumption holds
+
+    -   H1: the proportional odds assumption does not hold
+
+-   If [***Brant test***]{.ul} indicates that the parallel regression
+    assumption is violated, we would need different models to describe
+    the relationship between each pair of outcome groups.
+
+-   A midway between regression on continuous outcomes and nominal
+    outcomes
+
+-   Model choice - similar in all regression techniques.
+
+# Example 2: Social science
+
+-   Cross sectional study in a population of young college attendants
+    asked how likely is that they would apply to study for further
+    university degrees
+
+-   [***Outcome/Dependent/Response variable:***]{.ul} a three level
+    variable called **apply** with levels "unlikely", "somewhat likely",
+    and "very likely", coded 1, 2, and 3, respectively.
+
+-   Three [***independent variables***]{.ul}::
+
+    -   **pared**: a binary 0/1 variable indicating whether at least one
+        parent has a graduate degree;
+
+    -   **public**: a binary 0/1 variable indicating that the
+        undergraduate institution is public (1) and (0) private, and
+
+    -   **gpa**: which is the student's grade point average - continuous
+
+## Reading and exploring the data
+
+```{r}
+mydata<-read.table("OrdinalLogisticExample.txt", header=T, sep="\t")
+mydata
+names(mydata)
+
+##this is an ordinal outcome as we cannot mathematically operate in any way
+
+## one at a time, table apply, pared, and public
+lapply(mydata[, c("apply", "pared", "public")], table)
+## three way cross tabs (xtabs) and flatten the table
+ftable(xtabs(~ public + apply + pared, data = mydata))
+summary(mydata$gpa)
+sd(mydata$gpa)
+
+##explores the outcome by the three independent variables
+##We can also examine the distribution of gpa at every level of applyand broken down by public and pared. This creates a 2 x 2 grid with a boxplot of gpa for every level of apply, ##for particular values of pared and public. 
+
+##To better see the data, we also add the raw data points on top of the box plots, with a small amount of noise (often called "jitter") and 50% transparency so they do not overwhelm the boxplots.
+
+##Finally, in addition to the cells, we plot all of the marginal relationships. The margins make the final plot a 3 x 3 grid. In the lower right hand corner, is the overall relationship between apply and gpa.  
+
+ggplot(mydata, aes(x = apply, y = gpa)) +
+  geom_boxplot(size = .75) +
+  geom_jitter(alpha = .5) +
+  facet_grid(pared ~ public, margins = TRUE) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+```
+
+## Creating an ordinal outcome
+
+```{r}
+mydata$apply_factor<-as.factor(mydata$apply_cat)
+table(mydata$apply_factor,mydata$apply)
+
+```
+
+## Fitting a multivariable ordinal logistic regression
+
+```{r}
+## fit ordered logit model and store results 'model1'
+model1 <- polr(apply_factor ~ public+ gpa+ pared  , data = mydata, Hess=TRUE)
+
+## view a summary of the model
+summary(model1)
+
+```
+
+## The associated p-values
+
+```{r}
+(ctable <- coef(summary(model1)))
+## calculate and store p values
+p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
+ 
+## combined table
+(ctable <- cbind(ctable, "p value" = p))
+
+```
+
+## The ODDS RATIOS
+
+```{r}
+## ci
+(ci <- confint(model1)) # default method gives profiled CIs
+
+## odds ratios
+exp(coef(model1))
+
+## OR and CI
+exp(cbind(OR = coef(model1), ci))
+```
+
+## Interpretation for the additive models 
+
+0.94 = this is the proportional odds ratio of comparing public to
+private on **apply** given the other variables in the model are held
+constant.
+
+For public school participants, the odds of very likely (to apply)
+versus the combined somewhat likely and unlikely (to apply) are 0.94
+times lower than for private school pupils, given the other variables
+are held constant.
+
+Likewise, the odds of the combined very likely and somewhat likely (to
+apply) versus the unlikely (to apply) for public school participants are
+0.94 times lower than for private school pupils, given the other
+variables are held constant.
+
+```{r}
+## only brant model is validated as proportional assumptions
+brant(model1)
+```
+
+There is no evidence to suggest that the model does violate the parallel
+assumption.
+
+```{r}
+newdat <- data.frame(
+  pared = rep(0:1, 200),
+  public = rep(0:1, each = 200),
+  gpa = rep(seq(from = 1.9, to = 4, length.out = 100), 4))
+
+newdat <- cbind(newdat, predict(model1, newdat, type = "probs"))
+
+##show first few rows
+head(newdat)
+
+lnewdat <- melt(newdat, id.vars = c("pared", "public", "gpa"), variable.name = "Level", value.name="Probability")
+dim(lnewdat)
+## view first few rows
+lnewdat
+table(lnewdat$public) 
+
+ggplot(lnewdat, aes(x = gpa, y =value, colour = variable)) +
+  geom_line() + facet_grid(pared ~ public, labeller="label_both")
+```
