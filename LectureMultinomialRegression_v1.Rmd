@@ -36,7 +36,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
     -   linearity assumption extends from that between the outcome and
         independent variable (continuous outcome situation) to that
-        between the log of the risk ratios and the potential explanatory variables
+        between the log of the risk ratios and the potential explanatory
+        variables
 
 -   Supervised learning technique - parametric techniques
 
@@ -93,7 +94,7 @@ knitr::opts_chunk$set(echo = TRUE)
     -   H0: no association between outcome and independent variables
         translates into $RRR=1$
 
-    -   H0: there is an association between outcome and the independent
+    -   H1: there is an association between outcome and the independent
         variable which translates into $RRR\neq 1$
 
 ### Multivariable associations
@@ -120,7 +121,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 -   Independence of the observations
 
--   All model assume some kind of linear relationship:
+-   All models assume some kind of linear relationship:
 
     -   Continuous outcome: between the outcome and the independent
         variables
@@ -181,7 +182,7 @@ As for the all regression techniques:
 -   Odds Ratios: $\frac{OR_{women}}{OR_{men}}$
 
 -   Relative Risk
-    Ratios:$\frac{{\frac{OR_{women}}{OR_{men}}_{UK}}}{{\frac{OR_{women}}{OR_{men}}}_{France}}$
+    Ratios:$\frac{{\frac{RR_{women}}{RR_{men}}_{UK}}}{{\frac{RR_{women}}{RR_{men}}}_{France}}$
 
 # Example 1: Social science data
 
@@ -341,9 +342,9 @@ exp(confint(multinom_on_age))
 
 ```
 
-### Interpretation: 
+### Interpretation:
 
-1.002= The relative risk ratio for a one unit increase in **age** for
+1.002= The relative risk ratio for a one year increase in **age** for
 being Democrat relative to Independent. For one year increase in age,
 the relative risk (probability) for being a Democrat relative to
 Independent would be expected to increase by a factor of 1.002. The
@@ -696,7 +697,7 @@ table(mydata$apply_factor,mydata$apply)
 
 ```{r}
 ## fit ordered logit model and store results 'model1'
-model1 <- polr(apply_factor ~ public+ gpa+ pared  , data = mydata, Hess=TRUE)
+model1 <- polr(apply_factor ~ public* gpa+ pared  , data = mydata, Hess=TRUE)
 
 ## view a summary of the model
 summary(model1)
@@ -728,7 +729,7 @@ exp(coef(model1))
 exp(cbind(OR = coef(model1), ci))
 ```
 
-## Interpretation for the additive models 
+## Interpretation for the additive models
 
 0.94 = this is the proportional odds ratio of comparing public to
 private on **apply** given the other variables in the model are held
