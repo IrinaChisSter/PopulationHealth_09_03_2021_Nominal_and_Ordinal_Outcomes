@@ -533,7 +533,9 @@ The p-values
 
 ```{r}
 # 2-tailed z test
-multinom_on_multiplic_p <- (1 - pnorm(abs(multinom_on_multiplic_summary), 0, 1)) * 2
+multinom_on_multiplic_test <- summary(multinom_on_multiplic)$coefficients/summary(multinom_on_multiplic)$standard.errors
+
+multinom_on_multiplic_p <- (1 - pnorm(abs(multinom_on_multiplic_test), 0, 1)) * 2
 multinom_on_multiplic_p
 ```
 
